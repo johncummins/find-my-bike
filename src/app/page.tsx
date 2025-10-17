@@ -77,11 +77,12 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">
+          <h1 className="text-4xl font-bold font-serif text-foreground mb-2">
             Find My Bike
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Upload a photo of your bike and find similar listings on eBay UK
+          <p className="text-lg font-sans text-muted-foreground">
+            Upload a photo of your missing bike and find similar listings on
+            eBay UK
           </p>
         </div>
 
@@ -91,8 +92,10 @@ export default function Home() {
             <form action={handleSubmit} className="space-y-6">
               {/* Image Upload */}
               <div className="space-y-2">
-                <Label htmlFor="image" className="text-sm font-medium">
-                  Bike Image *
+                <Label
+                  htmlFor="image"
+                  className="text-sm font-medium font-sans">
+                  Photo of Your Missing Bike *
                 </Label>
                 <div className="flex items-center justify-start">
                   {selectedImage ? (
@@ -132,15 +135,17 @@ export default function Home() {
                   onChange={handleFileChange}
                   className="hidden"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Upload a clear photo of your bike for best results
+                <p className="text-xs font-sans text-muted-foreground">
+                  Upload a clear photo of your missing bike for best results
                 </p>
               </div>
 
               {/* Optional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="brand">Brand</Label>
+                  <Label htmlFor="brand" className="font-sans">
+                    Brand
+                  </Label>
                   <Input
                     type="text"
                     id="brand"
@@ -149,7 +154,9 @@ export default function Home() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="model">Model</Label>
+                  <Label htmlFor="model" className="font-sans">
+                    Model
+                  </Label>
                   <Input
                     type="text"
                     id="model"
@@ -158,7 +165,9 @@ export default function Home() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="color">Color</Label>
+                  <Label htmlFor="color" className="font-sans">
+                    Color
+                  </Label>
                   <Input
                     type="text"
                     id="color"
@@ -183,7 +192,7 @@ export default function Home() {
                   ) : (
                     <>
                       <Search className="mr-2 h-4 w-4" />
-                      Find My Bike
+                      Search for My Missing Bike
                     </>
                   )}
                 </Button>
@@ -196,7 +205,7 @@ export default function Home() {
         {error && (
           <Alert variant="destructive" className="mb-8">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="font-sans">{error}</AlertDescription>
           </Alert>
         )}
 
@@ -204,9 +213,10 @@ export default function Home() {
         {results.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Search Results</CardTitle>
-              <CardDescription>
-                Found {results.length} similar bikes sorted by visual similarity
+              <CardTitle className="font-serif">Search Results</CardTitle>
+              <CardDescription className="font-sans">
+                Found {results.length} similar bikes that might match your
+                missing bike, sorted by visual similarity
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -229,22 +239,22 @@ export default function Home() {
                     </div>
                     <CardContent className="p-4">
                       {/* Title */}
-                      <h3 className="font-medium text-foreground mb-2 line-clamp-2">
+                      <h3 className="font-medium font-sans text-foreground mb-2 line-clamp-2">
                         {result.title}
                       </h3>
 
                       {/* Price */}
-                      <div className="text-lg font-bold text-green-600 mb-3">
+                      <div className="text-lg font-bold font-sans text-green-600 mb-3">
                         {result.price.currency} {result.price.value}
                       </div>
 
                       {/* Similarity Score */}
                       <div className="mb-4">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-muted-foreground">
+                          <span className="text-sm font-medium font-sans text-muted-foreground">
                             Similarity
                           </span>
-                          <Badge variant="secondary">
+                          <Badge variant="secondary" className="font-mono">
                             {result.similarityScore.toFixed(1)}%
                           </Badge>
                         </div>
@@ -256,7 +266,7 @@ export default function Home() {
 
                       {/* Condition */}
                       {result.condition && (
-                        <div className="text-sm text-muted-foreground mb-3">
+                        <div className="text-sm font-sans text-muted-foreground mb-3">
                           Condition: {result.condition}
                         </div>
                       )}
@@ -284,8 +294,8 @@ export default function Home() {
           <Card>
             <CardContent className="p-8 text-center">
               <Spinner className="h-8 w-8 mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Searching eBay and comparing images...
+              <p className="font-sans text-muted-foreground">
+                Searching eBay for bikes that might match your missing bike...
               </p>
               <div className="mt-4 space-y-2">
                 <Skeleton className="h-4 w-full" />
