@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { searchBikes, BikeSearchResult } from "@/app/actions/searchBikes";
 import { Button } from "@/components/ui/button";
@@ -18,12 +18,29 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Upload, Search, ExternalLink, AlertCircle } from "lucide-react";
+import { Upload, Search, ExternalLink, AlertCircle, Plus } from "lucide-react";
 
 export default function Home() {
   const [results, setResults] = useState<BikeSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
@@ -77,13 +94,43 @@ export default function Home() {
                 <Label htmlFor="image" className="text-sm font-medium">
                   Bike Image *
                 </Label>
-                <Input
+                <div className="flex items-center justify-start">
+                  {selectedImage ? (
+                    <div className="relative">
+                      <img
+                        src={selectedImage}
+                        alt="Selected bike"
+                        className="h-24 w-24 rounded-lg object-cover border-2 border-primary"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleFileClick}
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-background border-2 hover:bg-primary hover:text-primary-foreground">
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      onClick={handleFileClick}
+                      className="h-24 w-24 rounded-lg border-dashed border-2 hover:border-primary hover:bg-primary/5 transition-colors">
+                      <Plus className="h-8 w-8 text-muted-foreground" />
+                    </Button>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
                   type="file"
                   id="image"
                   name="image"
                   accept="image/*"
                   required
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                  onChange={handleFileChange}
+                  className="hidden"
                 />
                 <p className="text-xs text-muted-foreground">
                   Upload a clear photo of your bike for best results
