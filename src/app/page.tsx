@@ -4,13 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { searchBikes, BikeSearchResult } from "@/app/actions/searchBikes";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -18,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Upload, Search, ExternalLink, AlertCircle, Plus } from "lucide-react";
+import { Search, ExternalLink, AlertCircle, Plus, Bike } from "lucide-react";
 
 export default function Home() {
   const [results, setResults] = useState<BikeSearchResult[]>([]);
@@ -73,8 +67,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-10">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold font-serif text-foreground mb-2">
@@ -131,7 +125,6 @@ export default function Home() {
                   id="image"
                   name="image"
                   accept="image/*"
-                  required
                   onChange={handleFileChange}
                   className="hidden"
                 />
@@ -192,7 +185,7 @@ export default function Home() {
                   ) : (
                     <>
                       <Search className="mr-2 h-4 w-4" />
-                      Search for My Missing Bike
+                      Find My Bike
                     </>
                   )}
                 </Button>
@@ -211,21 +204,23 @@ export default function Home() {
 
         {/* Results */}
         {results.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-serif">Search Results</CardTitle>
-              <CardDescription className="font-sans">
+          <div>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold font-serif text-foreground mb-2">
+                Search Results
+              </h2>
+              <p className="text-muted-foreground font-sans">
                 Found {results.length} similar bikes that might match your
                 missing bike, sorted by visual similarity
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {results.map((result) => (
-                  <Card
-                    key={result.itemId}
-                    className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="aspect-video relative">
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {results.map((result) => (
+                <Card
+                  key={result.itemId}
+                  className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-video relative">
+                    {result.image.imageUrl && (
                       <Image
                         src={result.image.imageUrl}
                         alt={result.title}
@@ -233,60 +228,76 @@ export default function Home() {
                         className="object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = "/placeholder-bike.svg";
+                          target.style.display = "none";
+                          const placeholder =
+                            target.parentElement?.querySelector(
+                              ".image-placeholder"
+                            ) as HTMLElement;
+                          if (placeholder) {
+                            placeholder.style.display = "flex";
+                          }
                         }}
                       />
+                    )}
+                    <div
+                      className={`image-placeholder absolute inset-0 ${
+                        !result.image.imageUrl ? "flex" : "hidden"
+                      } flex-col items-center justify-center bg-slate-50 border border-slate-200`}>
+                      <Bike className="w-12 h-12 text-slate-400 mb-2" />
+                      <p className="text-slate-500 text-sm font-medium">
+                        Image Unavailable
+                      </p>
                     </div>
-                    <CardContent className="p-4">
-                      {/* Title */}
-                      <h3 className="font-medium font-sans text-foreground mb-2 line-clamp-2">
-                        {result.title}
-                      </h3>
+                  </div>
+                  <CardContent className="p-4">
+                    {/* Title */}
+                    <h3 className="font-medium font-sans text-foreground mb-2 line-clamp-2">
+                      {result.title}
+                    </h3>
 
-                      {/* Price */}
-                      <div className="text-lg font-bold font-sans text-green-600 mb-3">
-                        {result.price.currency} {result.price.value}
+                    {/* Price */}
+                    <div className="text-lg font-bold font-sans text-green-600 mb-3">
+                      {result.price.currency} {result.price.value}
+                    </div>
+
+                    {/* Similarity Score */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium font-sans text-muted-foreground">
+                          Similarity
+                        </span>
+                        <Badge variant="secondary" className="font-mono">
+                          {result.similarityScore.toFixed(1)}%
+                        </Badge>
                       </div>
+                      <Progress
+                        value={result.similarityScore}
+                        className="h-2"
+                      />
+                    </div>
 
-                      {/* Similarity Score */}
-                      <div className="mb-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium font-sans text-muted-foreground">
-                            Similarity
-                          </span>
-                          <Badge variant="secondary" className="font-mono">
-                            {result.similarityScore.toFixed(1)}%
-                          </Badge>
-                        </div>
-                        <Progress
-                          value={result.similarityScore}
-                          className="h-2"
-                        />
+                    {/* Condition */}
+                    {result.condition && (
+                      <div className="text-sm font-sans text-muted-foreground mb-3">
+                        Condition: {result.condition}
                       </div>
+                    )}
 
-                      {/* Condition */}
-                      {result.condition && (
-                        <div className="text-sm font-sans text-muted-foreground mb-3">
-                          Condition: {result.condition}
-                        </div>
-                      )}
-
-                      {/* eBay Link */}
-                      <Button asChild className="w-full" variant="outline">
-                        <a
-                          href={result.itemWebUrl}
-                          target="_blank"
-                          rel="noopener noreferrer">
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          View on eBay
-                        </a>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                    {/* eBay Link */}
+                    <Button asChild className="w-full" variant="outline">
+                      <a
+                        href={result.itemWebUrl}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        View on eBay
+                      </a>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Loading State */}
