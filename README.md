@@ -50,7 +50,6 @@ Create a `.env.local` file in the root directory:
 ```env
 EBAY_CLIENT_ID=your_ebay_client_id_here
 EBAY_VERIFICATION_TOKEN=your-verification-token-here
-NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ### 4. Run Development Server
@@ -100,7 +99,6 @@ The app uses eBay's Browse API:
 ```env
 EBAY_CLIENT_ID=your_production_ebay_client_id
 EBAY_VERIFICATION_TOKEN=your_production_verification_token
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 ```
 
 ## Project Structure
