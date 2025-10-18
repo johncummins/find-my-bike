@@ -42,22 +42,7 @@ export default function Home() {
     setResults([]);
 
     try {
-      const imageFile = formData.get("image") as File;
-      const brand = formData.get("brand") as string;
-      const model = formData.get("model") as string;
-      const color = formData.get("color") as string;
-
-      if (!imageFile) {
-        throw new Error("Please select an image");
-      }
-
-      const searchResults = await searchBikes({
-        image: imageFile,
-        brand: brand || undefined,
-        model: model || undefined,
-        color: color || undefined,
-      });
-
+      const searchResults = await searchBikes(formData);
       setResults(searchResults);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -174,7 +159,7 @@ export default function Home() {
               <div className="flex justify-center">
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !selectedImage}
                   size="lg"
                   className="min-w-[200px] cursor-pointer">
                   {loading ? (
