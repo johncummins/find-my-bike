@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 export interface EbaySearchResult {
   itemId: string;
@@ -31,38 +31,40 @@ export async function searchEbayBikes(
   keywords: string,
   limit: number = 20
 ): Promise<EbaySearchResult[]> {
-  const apiKey = process.env.EBAY_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('EBAY_API_KEY environment variable is not set');
+  const clientId = process.env.EBAY_CLIENT_ID;
+
+  if (!clientId) {
+    throw new Error("EBAY_CLIENT_ID environment variable is not set");
   }
 
   try {
     const response = await axios.get<EbayApiResponse>(
-      'https://api.ebay.com/buy/browse/v1/item_summary/search',
+      "https://api.ebay.com/buy/browse/v1/item_summary/search",
       {
         params: {
           q: keywords,
-          itemLocationCountry: 'GB',
+          itemLocationCountry: "GB",
           limit: limit.toString(),
-          category_ids: '177831', // Bicycles category ID
-          filter: 'deliveryCountry:GB,conditionIds:{3000|4000|5000}', // New, Used, Refurbished
+          category_ids: "177831", // Bicycles category ID
+          filter: "deliveryCountry:GB,conditionIds:{3000|4000|5000}", // New, Used, Refurbished
         },
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'X-EBAY-C-MARKETPLACE-ID': 'EBAY_GB', // UK marketplace
+          Authorization: `Bearer ${clientId}`,
+          "Content-Type": "application/json",
+          "X-EBAY-C-MARKETPLACE-ID": "EBAY_GB", // UK marketplace
         },
       }
     );
 
     return response.data.itemSummaries || [];
   } catch (error) {
-    console.error('eBay API Error:', error);
+    console.error("eBay API Error:", error);
     if (axios.isAxiosError(error)) {
-      throw new Error(`eBay API request failed: ${error.response?.status} ${error.response?.statusText}`);
+      throw new Error(
+        `eBay API request failed: ${error.response?.status} ${error.response?.statusText}`
+      );
     }
-    throw new Error('Failed to search eBay');
+    throw new Error("Failed to search eBay");
   }
 }
 
@@ -73,20 +75,24 @@ export async function searchEbayBikes(
  * @param color - Bike color
  * @returns string - Formatted search keywords
  */
-export function buildSearchKeywords(brand?: string, model?: string, color?: string): string {
-  const keywords = ['bike', 'bicycle'];
-  
+export function buildSearchKeywords(
+  brand?: string,
+  model?: string,
+  color?: string
+): string {
+  const keywords = ["bike", "bicycle"];
+
   if (brand) {
     keywords.unshift(brand);
   }
-  
+
   if (model) {
     keywords.push(model);
   }
-  
+
   if (color) {
     keywords.push(color);
   }
-  
-  return keywords.join(' ');
+
+  return keywords.join(" ");
 }

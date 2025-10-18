@@ -41,14 +41,15 @@ npm install
 1. Go to [eBay Developer Program](https://developer.ebay.com/)
 2. Create a developer account
 3. Create a new application
-4. Get your API key (Client ID)
+4. Get your Client ID
 
 ### 3. Environment Configuration
 
 Create a `.env.local` file in the root directory:
 
 ```env
-EBAY_API_KEY=your_ebay_api_key_here
+EBAY_CLIENT_ID=your_ebay_client_id_here
+EBAY_VERIFICATION_TOKEN=your-verification-token-here
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
@@ -97,7 +98,8 @@ The app uses eBay's Browse API:
 ### Environment Variables for Production
 
 ```env
-EBAY_API_KEY=your_production_ebay_api_key
+EBAY_CLIENT_ID=your_production_ebay_client_id
+EBAY_VERIFICATION_TOKEN=your_production_verification_token
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 ```
 
