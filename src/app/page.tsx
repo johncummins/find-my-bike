@@ -104,7 +104,7 @@ export default function Home() {
                         variant="outline"
                         size="sm"
                         onClick={handleFileClick}
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-background border-2 hover:bg-primary hover:text-primary-foreground">
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-background border-2 hover:bg-primary hover:text-primary-foreground cursor-pointer">
                         <Plus className="h-3 w-3" />
                       </Button>
                     </div>
@@ -114,7 +114,7 @@ export default function Home() {
                       variant="outline"
                       size="lg"
                       onClick={handleFileClick}
-                      className="h-24 w-24 rounded-lg border-dashed border-2 hover:border-primary hover:bg-primary/5 transition-colors">
+                      className="h-24 w-24 rounded-lg border-dashed border-2 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
                       <Plus className="h-8 w-8 text-muted-foreground" />
                     </Button>
                   )}
@@ -176,7 +176,7 @@ export default function Home() {
                   type="submit"
                   disabled={loading}
                   size="lg"
-                  className="min-w-[200px]">
+                  className="min-w-[200px] cursor-pointer">
                   {loading ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
