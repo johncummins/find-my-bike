@@ -41,7 +41,7 @@ export function ResultsList({
               No Results Found
             </h2>
             <p className="text-muted-foreground font-sans">
-              We couldn't find any bikes matching your search. Try adjusting
+              We couldn&apos;t find any bikes matching your search. Try adjusting
               your search criteria or uploading a different photo.
             </p>
           </div>
