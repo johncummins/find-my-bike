@@ -5,8 +5,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
             <p className="text-sm text-muted-foreground font-sans">
-              © {new Date().getFullYear()} Find My Bike. Search powered by eBay
-              UK.
+              © {new Date().getFullYear()} Find My Bike
             </p>
           </div>
           <div className="text-sm text-muted-foreground font-sans">
