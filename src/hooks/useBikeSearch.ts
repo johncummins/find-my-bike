@@ -9,6 +9,7 @@ export function useBikeSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileClick = () => {
@@ -36,15 +37,18 @@ export function useBikeSearch() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
+    // Clear previous results immediately
+    setResults([]);
+    setError(null);
+    
     // Validate that an image is selected
     if (!selectedImage || !fileInputRef.current?.files?.[0]) {
-      setError("Please upload an image of your bike before searching");
+      setError("Please upload an image of your bike");
       return;
     }
 
     setLoading(true);
-    setError(null);
-    setResults([]);
+    setHasSearched(true);
 
     try {
       const formData = new FormData(event.currentTarget);
@@ -62,6 +66,7 @@ export function useBikeSearch() {
     loading,
     error,
     selectedImage,
+    hasSearched,
     fileInputRef,
     handleFileClick,
     handleFileChange,

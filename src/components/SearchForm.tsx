@@ -28,9 +28,9 @@ export function SearchForm({
   fileInputRef,
 }: SearchFormProps) {
   return (
-    <Card className="mb-8">
+    <Card>
       <CardContent className="p-8">
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-8">
           <ImageUpload
             selectedImage={selectedImage}
             onFileClick={onFileClick}
@@ -39,7 +39,7 @@ export function SearchForm({
             fileInputRef={fileInputRef}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
               <Label htmlFor="make">Bike Make</Label>
               <Input
@@ -82,4 +82,3 @@ export function SearchForm({
     </Card>
   );
 }
-

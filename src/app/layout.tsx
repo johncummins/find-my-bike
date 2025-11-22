@@ -22,10 +22,17 @@ export const metadata: Metadata = {
   title: "Find My Bike - Search eBay UK for Your Missing Bike",
   description:
     "Upload a photo of your missing bike and find similar listings on eBay UK. Search by image, make, and model to locate your bike quickly.",
-  keywords: ["bike search", "find bike", "eBay UK", "bicycle search", "missing bike"],
+  keywords: [
+    "bike search",
+    "find bike",
+    "eBay UK",
+    "bicycle search",
+    "missing bike",
+  ],
   openGraph: {
     title: "Find My Bike - Search eBay UK for Your Missing Bike",
-    description: "Upload a photo of your missing bike and find similar listings on eBay UK",
+    description:
+      "Upload a photo of your missing bike and find similar listings on eBay UK",
     type: "website",
   },
 };
@@ -36,9 +43,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${montserrat.variable} ${merriweather.variable} ${sourceCodePro.variable} antialiased`}>
+        className={`${montserrat.variable} ${merriweather.variable} ${sourceCodePro.variable} antialiased flex flex-col min-h-full`}>
         {children}
       </body>
     </html>
