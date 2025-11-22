@@ -21,12 +21,6 @@ export interface EbayApiResponse {
   total: number;
 }
 
-/**
- * Search eBay UK for bikes using the Browse API
- * @param keywords - Search keywords (brand, model, color)
- * @param limit - Maximum number of results (default: 20)
- * @returns Promise<EbaySearchResult[]> - Array of search results
- */
 // Get OAuth 2.0 access token for eBay API
 async function getEbayAccessToken(): Promise<string> {
   const clientId = process.env.EBAY_CLIENT_ID;
@@ -55,29 +49,80 @@ async function getEbayAccessToken(): Promise<string> {
     );
 
     return response.data.access_token;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to authenticate with eBay API");
   }
 }
 
-export async function searchEbayBikes(
-  keywords: string,
-  limit: number = 20
+/**
+ * Search eBay by image, make, and model
+ * Uses eBay's search_by_image endpoint with Base64 image and aspect filters
+ * @param imageBuffer - The image buffer to search with
+ * @param make - Bike make/brand
+ * @param model - Bike model
+ * @param limit - Maximum number of results (default: 50)
+ * @returns Promise<EbaySearchResult[]> - Array of search results
+ */
+export async function searchByImage(
+  imageBuffer: Buffer,
+  make: string,
+  model: string,
+  limit: number = 50
 ): Promise<EbaySearchResult[]> {
   try {
     // Get OAuth access token
     const accessToken = await getEbayAccessToken();
 
-    const response = await axios.get<EbayApiResponse>(
-      "https://api.ebay.com/buy/browse/v1/item_summary/search",
+    // Convert image buffer to Base64 string
+    const base64Image = imageBuffer.toString("base64");
+
+    // Build aspect filter for make and model
+    const categoryId = "177831"; // Bicycles category ID
+
+    // Build query parameters
+    const params: Record<string, string> = {
+      category_ids: categoryId,
+      limit: limit.toString(),
+      filter: "deliveryCountry:GB,conditionIds:{3000|4000|5000}", // UK, New/Used/Refurbished
+    };
+
+    // Build aspect filter if we have make or model
+    // Note: Aspect names may vary by category, common ones are Brand/Make and Model
+    if (make || model) {
+      const aspectFilters: string[] = [`categoryId:${categoryId}`];
+
+      if (make) {
+        // Try both "Brand" and "Make" as aspect names
+        // Escape special characters in make (e.g., pipe symbols)
+        const escapedMake = make.replace(/\|/g, "\\|").trim();
+        if (escapedMake) {
+          // Use "Brand" as it's more common in eBay's bicycle category
+          aspectFilters.push(`Brand:{${escapedMake}}`);
+        }
+      }
+
+      if (model) {
+        // Escape special characters in model
+        const escapedModel = model.replace(/\|/g, "\\|").trim();
+        if (escapedModel) {
+          aspectFilters.push(`Model:{${escapedModel}}`);
+        }
+      }
+
+      if (aspectFilters.length > 1) {
+        // Only add aspect filter if we have at least one aspect beyond categoryId
+        params.aspect_filter = aspectFilters.join(",");
+      }
+    }
+
+    // POST request to search_by_image endpoint
+    const response = await axios.post<EbayApiResponse>(
+      "https://api.ebay.com/buy/browse/v1/item_summary/search_by_image",
       {
-        params: {
-          q: keywords,
-          itemLocationCountry: "GB",
-          limit: limit.toString(),
-          category_ids: "177831", // Bicycles category ID
-          filter: "deliveryCountry:GB,conditionIds:{3000|4000|5000}", // New, Used, Refurbished
-        },
+        image: base64Image,
+      },
+      {
+        params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -89,39 +134,26 @@ export async function searchEbayBikes(
     return response.data.itemSummaries || [];
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      const errorData = error.response?.data;
+      const errorMessage =
+        errorData?.errors?.[0]?.message ||
+        errorData?.message ||
+        error.response?.statusText ||
+        "Unknown error";
+
+      console.error("eBay search_by_image error:", {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        error: errorMessage,
+        hasMake: !!make,
+        hasModel: !!model,
+      });
+
       throw new Error(
-        `eBay API request failed: ${error.response?.status} ${error.response?.statusText}`
+        `eBay API request failed: ${error.response?.status} ${errorMessage}`
       );
     }
-    throw new Error("Failed to search eBay");
+    console.error("Unexpected error in searchByImage:", error);
+    throw new Error("Failed to search eBay by image");
   }
-}
-
-/**
- * Build search keywords from bike details
- * @param brand - Bike brand
- * @param model - Bike model
- * @param color - Bike color
- * @returns string - Formatted search keywords
- */
-export function buildSearchKeywords(
-  brand?: string,
-  model?: string,
-  color?: string
-): string {
-  const keywords = ["bike", "bicycle"];
-
-  if (brand) {
-    keywords.unshift(brand);
-  }
-
-  if (model) {
-    keywords.push(model);
-  }
-
-  if (color) {
-    keywords.push(color);
-  }
-
-  return keywords.join(" ");
 }

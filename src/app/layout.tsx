@@ -21,7 +21,7 @@ const sourceCodePro = Source_Code_Pro({
 export const metadata: Metadata = {
   title: "Find My Bike - eBay Bike Search",
   description:
-    "Upload a photo of your bike and find similar listings on eBay UK using AI-powered image comparison",
+    "Upload a photo of your bike and find similar listings on eBay UK",
 };
 
 export default function RootLayout({

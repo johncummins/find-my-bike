@@ -16,6 +16,27 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // Handle remaining modules
+    config.externals = config.externals || [];
+
+    if (isServer) {
+      // Exclude problematic modules from server-side bundling
+      config.externals.push({
+        sharp: "commonjs sharp",
+      });
+    }
+
+    // Ignore problematic files
+    config.module.rules.push({
+      test: /\.html$/,
+      loader: "ignore-loader",
+    });
+
+    return config;
+  },
+  // Exclude problematic packages from server-side rendering
+  serverExternalPackages: ["sharp"],
 };
 
 export default nextConfig;
