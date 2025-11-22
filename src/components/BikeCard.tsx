@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { Bike, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { EbaySearchResult } from "@/lib/ebayApi";
 
@@ -13,8 +12,8 @@ interface BikeCardProps {
 
 export function BikeCard({ result }: BikeCardProps) {
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-0">
+    <Card className="overflow-hidden flex flex-col h-full">
+      <CardContent className="p-0 flex flex-col h-full">
         <div className="relative h-48 bg-slate-100">
           {result.image?.imageUrl ? (
             <Image
@@ -34,27 +33,19 @@ export function BikeCard({ result }: BikeCardProps) {
           )}
         </div>
 
-        <div className="p-4 space-y-3">
-          <h3 className="font-medium text-sm text-foreground line-clamp-2">
-            {result.title}
-          </h3>
-
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-foreground">
-              {result.price.currency} {result.price.value}
-            </span>
-            {result.condition && (
-              <Badge variant="outline" className="text-xs">
-                {result.condition}
-              </Badge>
-            )}
+        <div className="p-4 flex flex-col flex-1">
+          <div className="flex-1">
+            <h3 className="font-medium text-sm text-foreground line-clamp-2">
+              {result.title}
+            </h3>
           </div>
 
-          <div className="flex gap-2">
+          <div className="mt-4">
             <Button
               asChild
               size="sm"
-              className="flex-1 cursor-pointer">
+              variant="outline"
+              className="w-full cursor-pointer">
               <a
                 href={result.itemWebUrl}
                 target="_blank"
@@ -70,4 +61,3 @@ export function BikeCard({ result }: BikeCardProps) {
     </Card>
   );
 }
-
