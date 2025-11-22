@@ -17,6 +17,7 @@ export default function Home() {
     fileInputRef,
     handleFileClick,
     handleFileChange,
+    handleRemoveImage,
     handleSubmit,
   } = useBikeSearch();
 
@@ -31,6 +32,7 @@ export default function Home() {
           selectedImage={selectedImage}
           onFileChange={handleFileChange}
           onFileClick={handleFileClick}
+          onRemoveImage={handleRemoveImage}
           fileInputRef={fileInputRef}
         />
 

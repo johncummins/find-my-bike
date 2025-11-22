@@ -16,8 +16,26 @@ export interface EbaySearchResult {
   color?: string;
 }
 
+interface EbayApiItemSummary {
+  itemId: string;
+  title: string;
+  price?: {
+    value: string;
+    currency: string;
+  };
+  image?: {
+    imageUrl: string;
+  };
+  itemWebUrl: string;
+  condition?: string;
+  localizedAspects?: Array<{
+    name: string;
+    value: string;
+  }>;
+}
+
 export interface EbayApiResponse {
-  itemSummaries: EbaySearchResult[];
+  itemSummaries: EbayApiItemSummary[];
   total: number;
 }
 
@@ -84,6 +102,7 @@ export async function searchByImage(
       category_ids: categoryId,
       limit: limit.toString(),
       filter: "deliveryCountry:GB,conditionIds:{3000|4000|5000}", // UK, New/Used/Refurbished
+      fieldgroups: "ASPECT_REFINEMENTS", // Request localized aspects for brand/color
     };
 
     // Build aspect filter if we have make or model
@@ -131,7 +150,34 @@ export async function searchByImage(
       }
     );
 
-    return response.data.itemSummaries || [];
+    // Map the API response to our EbaySearchResult format
+    return (response.data.itemSummaries || []).map((item) => {
+      // Extract brand and color from localizedAspects
+      let brand: string | undefined;
+      let color: string | undefined;
+
+      if (item.localizedAspects) {
+        for (const aspect of item.localizedAspects) {
+          const aspectName = aspect.name?.toLowerCase();
+          if (aspectName === "brand" || aspectName === "make") {
+            brand = aspect.value;
+          } else if (aspectName === "color" || aspectName === "colour") {
+            color = aspect.value;
+          }
+        }
+      }
+
+      return {
+        itemId: item.itemId,
+        title: item.title,
+        price: item.price || { value: "0", currency: "GBP" },
+        image: item.image || { imageUrl: "" },
+        itemWebUrl: item.itemWebUrl,
+        condition: item.condition,
+        brand,
+        color,
+      };
+    });
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const errorData = error.response?.data;

@@ -14,6 +14,7 @@ interface SearchFormProps {
   selectedImage: string | null;
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFileClick: () => void;
+  onRemoveImage: () => void;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
@@ -23,6 +24,7 @@ export function SearchForm({
   selectedImage,
   onFileChange,
   onFileClick,
+  onRemoveImage,
   fileInputRef,
 }: SearchFormProps) {
   return (
@@ -33,6 +35,7 @@ export function SearchForm({
             selectedImage={selectedImage}
             onFileClick={onFileClick}
             onFileChange={onFileChange}
+            onRemoveImage={onRemoveImage}
             fileInputRef={fileInputRef}
           />
 

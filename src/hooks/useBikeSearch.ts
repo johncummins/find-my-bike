@@ -26,8 +26,22 @@ export function useBikeSearch() {
     }
   };
 
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
+    // Validate that an image is selected
+    if (!selectedImage || !fileInputRef.current?.files?.[0]) {
+      setError("Please upload an image of your bike before searching");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setResults([]);
@@ -51,6 +65,7 @@ export function useBikeSearch() {
     fileInputRef,
     handleFileClick,
     handleFileChange,
+    handleRemoveImage,
     handleSubmit,
   };
 }
