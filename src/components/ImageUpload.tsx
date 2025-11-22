@@ -64,9 +64,6 @@ export function ImageUpload({
         ref={fileInputRef}
         onChange={onFileChange}
       />
-      <p className="text-[14px] text-muted-foreground">
-        Upload a clear photo of your missing bike for best results
-      </p>
     </div>
   );
 }

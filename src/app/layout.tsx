@@ -19,9 +19,15 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "Find My Bike - eBay Bike Search",
+  title: "Find My Bike - Search eBay UK for Your Missing Bike",
   description:
-    "Upload a photo of your bike and find similar listings on eBay UK",
+    "Upload a photo of your missing bike and find similar listings on eBay UK. Search by image, make, and model to locate your bike quickly.",
+  keywords: ["bike search", "find bike", "eBay UK", "bicycle search", "missing bike"],
+  openGraph: {
+    title: "Find My Bike - Search eBay UK for Your Missing Bike",
+    description: "Upload a photo of your missing bike and find similar listings on eBay UK",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
